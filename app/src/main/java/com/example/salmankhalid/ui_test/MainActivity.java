@@ -80,10 +80,7 @@ public class MainActivity extends AppCompatActivity
         BtnSwitch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(i>80)
-                    i=0;
-                i++;
-                setValues(i,i+3,i+10,i+20);
+                send_msg("VAL");
 
             }
         });
@@ -213,6 +210,7 @@ public class MainActivity extends AppCompatActivity
                 break;
             default:
                 subtitle = getString(R.string.status_disconnected);
+                bluetoothSerial.connect("98:D3:31:30:74:62");
                 break;
         }
 
@@ -316,6 +314,7 @@ public class MainActivity extends AppCompatActivity
     public void onBluetoothDeviceSelected(BluetoothDevice device) {
         // Connect to the selected remote Bluetooth device
         bluetoothSerial.connect(device);
+        //98:D3:31:30:74:62
     }
 
     /* End of the implementation of listeners */
@@ -328,16 +327,22 @@ public class MainActivity extends AppCompatActivity
         }
     };
 
+
+    public void send_msg(String message)
+    {
+        bluetoothSerial.write(message.toString().trim(), crlf);
+
+    }
+
     private void setValues(int t, int h, int w, int p)
     {
         temperture.setTargetValue((float)t);
-        temp.setText(""+t);
+        temp.setText("Temperature = "+t);
         humidity.setTargetValue((float)h);
-        humid.setText(""+h);
+        humid.setText("Humidity = "+h);
         waterlevel.setTargetValue((float)w);
-        water.setText(""+w);
+        water.setText("Water level = "+w);
         power.setTargetValue((float)p);
-        pow.setText(""+w);
+        pow.setText("Power = "+p);
     }
-
 }

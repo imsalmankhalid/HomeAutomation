@@ -26,26 +26,9 @@ public class Main2Activity extends AppCompatActivity {
         setContentView(R.layout.activity_main2);
 
         btn = (Button)findViewById(R.id.button3);
-        final GaugeView temperture = (GaugeView) findViewById(R.id.gauge_view);
-        txt = (TextView) findViewById(R.id.textView6);
-        txt2 = (TextView) findViewById(R.id.txtVal);
-        final Random random = new Random();
-        temperture.setTargetValue(40);
-        final CountDownTimer timer = new CountDownTimer(10000, 2) {
-            @Override
-            public void onTick(long millisUntilFinished) {
-                txt.setText("Waiting...");
-                txt2.setText("Value = "+temperture.getTargetValue());
-                temperture.setTargetValue(i++);
-                if(i>95)
-                    i=0;
 
-            }
-            @Override
-            public void onFinish() {
-            }
-        };
-        timer.start();
+        final Random random = new Random();
+
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

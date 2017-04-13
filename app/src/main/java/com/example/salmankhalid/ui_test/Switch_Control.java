@@ -106,7 +106,39 @@ public class Switch_Control extends AppCompatActivity
         switch4.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (b) {
+                    Toast.makeText(Switch_Control.this, "Truning on: Light 4 ", Toast.LENGTH_SHORT).show();
+                    send_msg("L41");
+                } else {
+                    Toast.makeText(Switch_Control.this, "Truning on: Light 4", Toast.LENGTH_SHORT).show();
+                    send_msg("L40");
+                }
+            }
+        });
 
+        switch5.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (b) {
+                    Toast.makeText(Switch_Control.this, "Truning on: Light 5 ", Toast.LENGTH_SHORT).show();
+                    send_msg("L51");
+                } else {
+                    Toast.makeText(Switch_Control.this, "Truning on: Light 5", Toast.LENGTH_SHORT).show();
+                    send_msg("L50");
+                }
+            }
+        });
+
+        switch6.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (b) {
+                    Toast.makeText(Switch_Control.this, "Truning on: Light 6 ", Toast.LENGTH_SHORT).show();
+                    send_msg("L61");
+                } else {
+                    Toast.makeText(Switch_Control.this, "Truning on: Light 6", Toast.LENGTH_SHORT).show();
+                    send_msg("L60");
+                }
             }
         });
     }
@@ -225,6 +257,7 @@ public class Switch_Control extends AppCompatActivity
                 break;
             default:
                 subtitle = getString(R.string.status_disconnected);
+                bluetoothSerial.connect("98:D3:31:30:74:62");
                 break;
         }
 

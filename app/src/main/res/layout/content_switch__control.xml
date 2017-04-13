@@ -18,31 +18,31 @@
         android:layout_height="match_parent">
 
         <Switch
-            android:text="Switch"
+            android:text="Room 1: Light"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:id="@+id/sw1" />
 
         <Switch
-            android:text="Switch"
+            android:text="Room 2: Light"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:id="@+id/sw2" />
 
         <Switch
-            android:text="Switch"
+            android:text="Room 3: Light"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:id="@+id/sw3" />
 
         <Switch
-            android:text="Switch"
+            android:text="FAN"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:id="@+id/sw4" />
 
         <Switch
-            android:text="Switch"
+            android:text="Door"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:id="@+id/sw5" />
