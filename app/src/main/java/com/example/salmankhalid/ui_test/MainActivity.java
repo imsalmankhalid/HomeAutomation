@@ -29,6 +29,9 @@ import com.macroyau.blue2serial.BluetoothDeviceListDialog;
 import com.macroyau.blue2serial.BluetoothSerial;
 import com.macroyau.blue2serial.BluetoothSerialListener;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 public class MainActivity extends AppCompatActivity
         implements BluetoothSerialListener, BluetoothDeviceListDialog.OnDeviceSelectedListener{
 
@@ -50,6 +53,7 @@ public class MainActivity extends AppCompatActivity
     GaugeView waterlevel;
     GaugeView power;
     TextView temp, humid, water, pow;
+
     int i=0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,18 +74,18 @@ public class MainActivity extends AppCompatActivity
         water = (TextView)findViewById(R.id.txtWater);
         pow = (TextView)findViewById(R.id.txtPower);
 
-        setValues(0,0,0,0);
+        /* Set a timer for polling the values */
 
         // If the adapter is null, then Bluetooth is not supported
         BtnSwitch = (Button) findViewById(R.id.button);
         tvTerminal = (TextView)findViewById(R.id.msg) ;
         btnBack = (Button) findViewById(R.id.button2);
 
+        setValues(0,0,0,0);
         BtnSwitch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 send_msg("VAL");
-
             }
         });
 
@@ -92,7 +96,6 @@ public class MainActivity extends AppCompatActivity
            //     startActivity(fp);
                    Intent fp=new Intent(getApplicationContext(),Switch_Control.class);
                      startActivity(fp);
-
             }
         });
     }
@@ -207,6 +210,7 @@ public class MainActivity extends AppCompatActivity
                 break;
             case BluetoothSerial.STATE_CONNECTED:
                 subtitle = getString(R.string.status_connected, bluetoothSerial.getConnectedDeviceName());
+                send_msg("VAL");
                 break;
             default:
                 subtitle = getString(R.string.status_disconnected);
@@ -328,10 +332,21 @@ public class MainActivity extends AppCompatActivity
     };
 
 
-    public void send_msg(String message)
-    {
-        bluetoothSerial.write(message.toString().trim(), crlf);
+    public void send_msg(String message) {
+        final int state;
+        if (bluetoothSerial != null)
+            state = bluetoothSerial.getState();
+        else
+            state = BluetoothSerial.STATE_DISCONNECTED;
 
+        switch (state) {
+            case BluetoothSerial.STATE_CONNECTED:
+                bluetoothSerial.write(message.toString().trim(), crlf);
+                break;
+            default:
+                Toast.makeText(MainActivity.this, "You are not connected to Home ", Toast.LENGTH_SHORT).show();
+                break;
+        }
     }
 
     private void setValues(int t, int h, int w, int p)
