@@ -35,7 +35,6 @@ public class Main2Activity extends AppCompatActivity {
                 //Intent fp=new Intent(getApplicationContext(),MainActivity.class);
                Intent fp=new Intent(getApplicationContext(),MainActivity.class);
                startActivity(fp);
-
             }
         });
     }
