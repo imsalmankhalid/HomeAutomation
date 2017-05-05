@@ -14,6 +14,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.Menu;
@@ -42,7 +43,10 @@ public class MainActivity extends AppCompatActivity
     private MenuItem actionConnect, actionDisconnect;
 
     private boolean crlf = false;
-
+    private Timer timer;
+    private String res;
+    private String[] web_data = new String[20];
+    private int count=0;
 
     Button BtnSwitch;
     Button btnBack;
@@ -73,6 +77,7 @@ public class MainActivity extends AppCompatActivity
         humid = (TextView)findViewById(R.id.txtHumid);
         water = (TextView)findViewById(R.id.txtWater);
         pow = (TextView)findViewById(R.id.txtPower);
+        timer = new Timer();
 
         /* Set a timer for polling the values */
 
@@ -85,7 +90,16 @@ public class MainActivity extends AppCompatActivity
         BtnSwitch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                send_msg("VAL");
+                //send_msg("VAL");
+                try {
+                    res = new ReadSwitchData(MainActivity.this).execute().get();
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
+                Toast.makeText(MainActivity.this, "Data "+res, Toast.LENGTH_SHORT).show();
+
             }
         });
 
@@ -104,6 +118,11 @@ public class MainActivity extends AppCompatActivity
         super.onStart();
         // Check Bluetooth availability on the device and set up the Bluetooth adapter
         bluetoothSerial.setup();
+    }
+    public void onPause() {
+        super.onPause();
+        timer.cancel();
+        bluetoothSerial.stop();
     }
 
     public void onDestroy() {
@@ -127,6 +146,7 @@ public class MainActivity extends AppCompatActivity
 
         // Disconnect from the remote device and close the serial port
         bluetoothSerial.stop();
+        timer.cancel();
     }
 
     @Override
@@ -211,16 +231,52 @@ public class MainActivity extends AppCompatActivity
             case BluetoothSerial.STATE_CONNECTED:
                 subtitle = getString(R.string.status_connected, bluetoothSerial.getConnectedDeviceName());
                 send_msg("VAL");
+                timer.scheduleAtFixedRate(new TimerTask() {
+
+                    @Override
+                    public void run() {
+                        try {
+                            res = new ReadSwitchData(MainActivity.this).execute().get();
+                            mHandler.obtainMessage(1).sendToTarget();
+                        }
+                        catch (Exception e)
+                        {
+                            e.printStackTrace();
+                        }
+                    }
+                }, 2000, 4000);
                 break;
             default:
                 subtitle = getString(R.string.status_disconnected);
-                bluetoothSerial.connect("98:D3:31:30:74:62");
+            //    bluetoothSerial.connect("98:D3:31:30:74:62");
                 break;
         }
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().setSubtitle(subtitle);
         }
+    }
+    public Handler mHandler = new Handler() {
+        public void handleMessage(Message msg) {
+            tvTerminal.setText(res.toString());
+            web_data[count++] = res;
+            Log.e("Web_data_get","Data" + res + "count " + count);
+            process_web_data();
+        }
+    };
+
+    void process_web_data() {
+        if(count >= 0){
+            for(int i= 0; i <= count; i++) {
+                if(send_msg_chk(web_data[count-1])) {
+                    Log.e("sending_to_bluetooth","Data" + web_data[count-1] + "count " + count);
+
+                    web_data[count-1] = "";
+                    count--;
+                }
+            }
+        }
+
     }
 
     private void showDeviceListDialog() {
@@ -331,7 +387,28 @@ public class MainActivity extends AppCompatActivity
         }
     };
 
+    boolean send_msg_chk(String message){
+        final int state;
+        boolean result = false;
+        if(!message.isEmpty()) {
+            if (bluetoothSerial != null)
+                state = bluetoothSerial.getState();
+            else
+                state = BluetoothSerial.STATE_DISCONNECTED;
 
+            switch (state) {
+                case BluetoothSerial.STATE_CONNECTED:
+                    bluetoothSerial.write(message.toString().trim(), crlf);
+                    Log.e("Sent message", message.toString().trim());
+                    result = true;
+                    break;
+                default:
+                    Toast.makeText(MainActivity.this, "You are not connected to Home ", Toast.LENGTH_SHORT).show();
+                    break;
+            }
+        }
+        return result;
+    }
     public void send_msg(String message) {
         final int state;
         if (bluetoothSerial != null)
@@ -359,5 +436,8 @@ public class MainActivity extends AppCompatActivity
         water.setText("Water level = "+w);
         power.setTargetValue((float)p);
         pow.setText("Power = "+p);
+
+        if(t !=0 && h != 0 && w !=0 && p != 0)
+            new SendRequest(this,t,h,w,p).execute();
     }
 }
