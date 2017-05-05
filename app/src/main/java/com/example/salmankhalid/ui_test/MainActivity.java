@@ -50,7 +50,6 @@ public class MainActivity extends AppCompatActivity
 
     Button BtnSwitch;
     Button btnBack;
-    Main2Activity main;
     TextView tvTerminal;
     GaugeView temperture;
     GaugeView humidity;

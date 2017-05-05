@@ -6,11 +6,14 @@ import android.bluetooth.BluetoothDevice;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,6 +26,9 @@ import com.macroyau.blue2serial.BluetoothDeviceListDialog;
 import com.macroyau.blue2serial.BluetoothSerial;
 import com.macroyau.blue2serial.BluetoothSerialListener;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 public class Switch_Control extends AppCompatActivity
         implements BluetoothSerialListener, BluetoothDeviceListDialog.OnDeviceSelectedListener{
 
@@ -33,6 +39,10 @@ public class Switch_Control extends AppCompatActivity
     private MenuItem actionConnect, actionDisconnect;
 
     private boolean crlf = false;
+    private Timer timer;
+    private String res;
+    private String[] web_data = new String[20];
+    private int count=0;
 
     private Switch switch1, switch2, switch3, switch4, switch5, switch6;
     private TextView tvTemp, tvHumidity, tvWater, tvPower;
@@ -56,6 +66,8 @@ public class Switch_Control extends AppCompatActivity
         tvHumidity = (TextView) findViewById(R.id.humid);
         tvPower = (TextView) findViewById(R.id.power);
         tvWater = (TextView) findViewById(R.id.water);
+
+        timer = new Timer();
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -174,6 +186,11 @@ public class Switch_Control extends AppCompatActivity
         // Disconnect from the remote device and close the serial port
         bluetoothSerial.stop();
     }
+    public void onPause() {
+        super.onPause();
+        timer.cancel();
+        bluetoothSerial.stop();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -257,16 +274,73 @@ public class Switch_Control extends AppCompatActivity
             case BluetoothSerial.STATE_CONNECTED:
                 subtitle = getString(R.string.status_connected, bluetoothSerial.getConnectedDeviceName());
                 send_msg("VAL");
+                timer.scheduleAtFixedRate(new TimerTask() {
+
+                    @Override
+                    public void run() {
+                        try {
+                            res = new ReadSwitchData(Switch_Control.this).execute().get();
+                            mHandler.obtainMessage(1).sendToTarget();
+                        }
+                        catch (Exception e)
+                        {
+                            e.printStackTrace();
+                        }
+                    }
+                }, 2000, 4000);
                 break;
             default:
                 subtitle = getString(R.string.status_disconnected);
-                bluetoothSerial.connect("98:D3:31:30:74:62");
+           //     bluetoothSerial.connect("98:D3:31:30:74:62");
                 break;
         }
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().setSubtitle(subtitle);
         }
+    }
+    public Handler mHandler = new Handler() {
+        public void handleMessage(Message msg) {
+            web_data[count++] = res;
+            Log.e("Web_data_get","Data" + res + "count " + count);
+            process_web_data();
+        }
+    };
+
+    void process_web_data() {
+        if(count >= 0){
+            for(int i= 0; i <= count; i++) {
+                if(send_msg_chk(web_data[count-1])) {
+                    Log.e("sending_to_bluetooth","Data" + web_data[count-1] + "count " + count);
+
+                    web_data[count-1] = "";
+                    count--;
+                }
+            }
+        }
+
+    }
+    boolean send_msg_chk(String message){
+        final int state;
+        boolean result = false;
+        if(!message.isEmpty()) {
+            if (bluetoothSerial != null)
+                state = bluetoothSerial.getState();
+            else
+                state = BluetoothSerial.STATE_DISCONNECTED;
+
+            switch (state) {
+                case BluetoothSerial.STATE_CONNECTED:
+                    bluetoothSerial.write(message.toString().trim(), crlf);
+                    Log.e("Sent message", message.toString().trim());
+                    result = true;
+                    break;
+                default:
+                    Toast.makeText(Switch_Control.this, "You are not connected to Home ", Toast.LENGTH_SHORT).show();
+                    break;
+            }
+        }
+        return result;
     }
 
     private void showDeviceListDialog() {
