@@ -2,6 +2,7 @@
     package="com.macroyau.blue2serial">
 
     <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application />
 
