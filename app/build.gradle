@@ -4,7 +4,7 @@ android {
     compileSdkVersion 23
     buildToolsVersion "25.0.2"
     defaultConfig {
-        applicationId "com.example.salmankhalid.ui_test"
+        applicationId "com.SHProject.SmartHome.AppMain"
         minSdkVersion 19
         targetSdkVersion 23
         versionCode 1
