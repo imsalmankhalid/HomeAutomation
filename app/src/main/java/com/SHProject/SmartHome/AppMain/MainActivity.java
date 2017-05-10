@@ -240,7 +240,7 @@ public class MainActivity extends AppCompatActivity
                 break;
             default:
                 subtitle = getString(R.string.status_disconnected);
-            //    bluetoothSerial.connect("98:D3:31:30:74:62");
+                bluetoothSerial.connect("98:D3:31:30:74:62");
                 break;
         }
 
