@@ -1,6 +1,5 @@
-package com.example.salmankhalid.ui_test;
+package com.SHProject.SmartHome.AppMain;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -15,17 +14,14 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.MenuInflater;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.ScrollView;
+import android.view.View;
+import android.widget.CompoundButton;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.salmankhalid.ui_test.library.GaugeView;
 import com.macroyau.blue2serial.BluetoothDeviceListDialog;
 import com.macroyau.blue2serial.BluetoothSerial;
 import com.macroyau.blue2serial.BluetoothSerialListener;
@@ -33,7 +29,7 @@ import com.macroyau.blue2serial.BluetoothSerialListener;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class MainActivity extends AppCompatActivity
+public class Switch_Control extends AppCompatActivity
         implements BluetoothSerialListener, BluetoothDeviceListDialog.OnDeviceSelectedListener{
 
     private static final int REQUEST_ENABLE_BLUETOOTH = 1;
@@ -48,67 +44,116 @@ public class MainActivity extends AppCompatActivity
     private String[] web_data = new String[20];
     private int count=0;
 
-    Button BtnSwitch;
-    Button btnBack;
-    TextView tvTerminal;
-    GaugeView temperture;
-    GaugeView humidity;
-    GaugeView waterlevel;
-    GaugeView power;
-    TextView temp, humid, water, pow;
+    private Switch switch1, switch2, switch3, switch4, switch5, switch6;
+    private TextView tvTemp, tvHumidity, tvWater, tvPower;
 
-    int i=0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
+        setContentView(R.layout.activity_switch__control);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
         bluetoothSerial = new BluetoothSerial(this, this);
 
-        /* Define Gauges to show current values */
-        temperture = (GaugeView) findViewById(R.id.g_temp);
-        humidity = (GaugeView) findViewById(R.id.g_humid);
-        waterlevel = (GaugeView) findViewById(R.id.g_water);
-        power = (GaugeView) findViewById(R.id.g_power);
+        switch1 = (Switch) findViewById(R.id.sw1);
+        switch2 = (Switch) findViewById(R.id.sw2);
+        switch3 = (Switch) findViewById(R.id.sw3);
+        switch4 = (Switch) findViewById(R.id.sw4);
+        switch5 = (Switch) findViewById(R.id.sw5);
+        switch6 = (Switch) findViewById(R.id.sw6);
 
-        /* define text views to display values */
-        temp = (TextView)findViewById(R.id.txtTemp);
-        humid = (TextView)findViewById(R.id.txtHumid);
-        water = (TextView)findViewById(R.id.txtWater);
-        pow = (TextView)findViewById(R.id.txtPower);
+        tvTemp = (TextView) findViewById(R.id.temp);
+        tvHumidity = (TextView) findViewById(R.id.humid);
+        tvPower = (TextView) findViewById(R.id.power);
+        tvWater = (TextView) findViewById(R.id.water);
+
         timer = new Timer();
 
-        /* Set a timer for polling the values */
-
-        // If the adapter is null, then Bluetooth is not supported
-        BtnSwitch = (Button) findViewById(R.id.button);
-        tvTerminal = (TextView)findViewById(R.id.msg) ;
-        btnBack = (Button) findViewById(R.id.button2);
-
-        setValues(0,0,0,0);
-        BtnSwitch.setOnClickListener(new View.OnClickListener() {
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //send_msg("VAL");
-                try {
-                    res = new ReadSwitchData(MainActivity.this).execute().get();
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace();
-                }
-                Toast.makeText(MainActivity.this, "Data "+res, Toast.LENGTH_SHORT).show();
-
+                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
             }
         });
 
-        btnBack.setOnClickListener(new View.OnClickListener() {
+        switch1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onClick(View view) {
-             //   Intent fp=new Intent(getApplicationContext(),Main2Activity.class);
-           //     startActivity(fp);
-                   Intent fp=new Intent(getApplicationContext(),Switch_Control.class);
-                     startActivity(fp);
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (b) {
+                    Toast.makeText(Switch_Control.this, "Living Room Light : On", Toast.LENGTH_SHORT).show();
+                    send_msg("L11");
+                } else {
+                    Toast.makeText(Switch_Control.this, "Living Room Light : Off", Toast.LENGTH_SHORT).show();
+                    send_msg("L10");
+                }
+            }
+        });
+
+        switch2.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (b) {
+                    Toast.makeText(Switch_Control.this, "Living Room Fan : On ", Toast.LENGTH_SHORT).show();
+                    send_msg("L21");
+                } else {
+                    Toast.makeText(Switch_Control.this, "Living Room Fan : Off", Toast.LENGTH_SHORT).show();
+                    send_msg("L20");
+                }
+            }
+        });
+
+
+        switch3.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (b) {
+                    Toast.makeText(Switch_Control.this, "Bed Room Light: On ", Toast.LENGTH_SHORT).show();
+                    send_msg("L31");
+                } else {
+                    Toast.makeText(Switch_Control.this, "Bed Room Light: Off", Toast.LENGTH_SHORT).show();
+                    send_msg("L30");
+                }
+            }
+        });
+
+        switch4.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (b) {
+                    Toast.makeText(Switch_Control.this, "Bed Room Fan: On", Toast.LENGTH_SHORT).show();
+                    send_msg("L41");
+                } else {
+                    Toast.makeText(Switch_Control.this, "Bed Room Fan: Off", Toast.LENGTH_SHORT).show();
+                    send_msg("L40");
+                }
+            }
+        });
+
+        switch5.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (b) {
+                    Toast.makeText(Switch_Control.this, "Kitchen Light: On", Toast.LENGTH_SHORT).show();
+                    send_msg("L51");
+                } else {
+                    Toast.makeText(Switch_Control.this, "Kitchen Light: Off", Toast.LENGTH_SHORT).show();
+                    send_msg("L50");
+                }
+            }
+        });
+
+        switch6.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (b) {
+                    Toast.makeText(Switch_Control.this, "Everythning: On ", Toast.LENGTH_SHORT).show();
+                    send_msg("ALL1");
+                } else {
+                    Toast.makeText(Switch_Control.this, "Everything: Off", Toast.LENGTH_SHORT).show();
+                    send_msg("ALL0");
+                }
             }
         });
     }
@@ -117,11 +162,6 @@ public class MainActivity extends AppCompatActivity
         super.onStart();
         // Check Bluetooth availability on the device and set up the Bluetooth adapter
         bluetoothSerial.setup();
-    }
-    public void onPause() {
-        super.onPause();
-        timer.cancel();
-        bluetoothSerial.stop();
     }
 
     public void onDestroy() {
@@ -145,7 +185,11 @@ public class MainActivity extends AppCompatActivity
 
         // Disconnect from the remote device and close the serial port
         bluetoothSerial.stop();
+    }
+    public void onPause() {
+        super.onPause();
         timer.cancel();
+        bluetoothSerial.stop();
     }
 
     @Override
@@ -235,7 +279,7 @@ public class MainActivity extends AppCompatActivity
                     @Override
                     public void run() {
                         try {
-                            res = new ReadSwitchData(MainActivity.this).execute().get();
+                            res = new ReadSwitchData(Switch_Control.this).execute().get();
                             mHandler.obtainMessage(1).sendToTarget();
                         }
                         catch (Exception e)
@@ -247,7 +291,7 @@ public class MainActivity extends AppCompatActivity
                 break;
             default:
                 subtitle = getString(R.string.status_disconnected);
-            //    bluetoothSerial.connect("98:D3:31:30:74:62");
+           //     bluetoothSerial.connect("98:D3:31:30:74:62");
                 break;
         }
 
@@ -257,7 +301,6 @@ public class MainActivity extends AppCompatActivity
     }
     public Handler mHandler = new Handler() {
         public void handleMessage(Message msg) {
-            tvTerminal.setText(res.toString());
             web_data[count++] = res;
             Log.e("Web_data_get","Data" + res + "count " + count);
             process_web_data();
@@ -276,6 +319,28 @@ public class MainActivity extends AppCompatActivity
             }
         }
 
+    }
+    boolean send_msg_chk(String message){
+        final int state;
+        boolean result = false;
+        if(!message.isEmpty()) {
+            if (bluetoothSerial != null)
+                state = bluetoothSerial.getState();
+            else
+                state = BluetoothSerial.STATE_DISCONNECTED;
+
+            switch (state) {
+                case BluetoothSerial.STATE_CONNECTED:
+                    bluetoothSerial.write(message.toString().trim(), crlf);
+                    Log.e("Sent message", message.toString().trim());
+                    result = true;
+                    break;
+                default:
+                    Toast.makeText(Switch_Control.this, "You are not connected to Home ", Toast.LENGTH_SHORT).show();
+                    break;
+            }
+        }
+        return result;
     }
 
     private void showDeviceListDialog() {
@@ -326,16 +391,11 @@ public class MainActivity extends AppCompatActivity
         invalidateOptionsMenu();
         updateBluetoothState();
     }
-
     char[] msg_data = new char[20];
     String values;
     int j=0;
     public void onBluetoothSerialRead(String message) {
-        // Print the incoming message on the terminal screen
-//        tvTerminal.append(getString(R.string.terminal_message_template,
-//                bluetoothSerial.getConnectedDeviceName(),
-//                message));
-//
+
         for(int i=0; i<message.length();i++)
         {
             if(message.charAt(i) != '$') {
@@ -354,26 +414,18 @@ public class MainActivity extends AppCompatActivity
                         Integer.parseInt(data_val[3]));
             }
         }
-        tvTerminal.setText(values);
         //svTerminal.post(scrollTerminalToBottom);
     }
 
     @Override
     public void onBluetoothSerialWrite(String message) {
-        // Print the outgoing message on the terminal screen
-        tvTerminal.append(getString(R.string.terminal_message_template,
-                bluetoothSerial.getLocalAdapterName(),
-                message));
-        //svTerminal.post(scrollTerminalToBottom);
     }
 
-    /* Implementation of BluetoothDeviceListDialog.OnDeviceSelectedListener */
 
     @Override
     public void onBluetoothDeviceSelected(BluetoothDevice device) {
         // Connect to the selected remote Bluetooth device
         bluetoothSerial.connect(device);
-        //98:D3:31:30:74:62
     }
 
     /* End of the implementation of listeners */
@@ -382,33 +434,15 @@ public class MainActivity extends AppCompatActivity
         @Override
         public void run() {
             // Scroll the terminal screen to the bottom
-      //      svTerminal.fullScroll(ScrollView.FOCUS_DOWN);
+            //      svTerminal.fullScroll(ScrollView.FOCUS_DOWN);
         }
     };
 
-    boolean send_msg_chk(String message){
-        final int state;
-        boolean result = false;
-        if(!message.isEmpty()) {
-            if (bluetoothSerial != null)
-                state = bluetoothSerial.getState();
-            else
-                state = BluetoothSerial.STATE_DISCONNECTED;
 
-            switch (state) {
-                case BluetoothSerial.STATE_CONNECTED:
-                    bluetoothSerial.write(message.toString().trim(), crlf);
-                    Log.e("Sent message", message.toString().trim());
-                    result = true;
-                    break;
-                default:
-                    Toast.makeText(MainActivity.this, "You are not connected to Home ", Toast.LENGTH_SHORT).show();
-                    break;
-            }
-        }
-        return result;
-    }
-    public void send_msg(String message) {
+
+
+    public void send_msg(String message)
+    {
         final int state;
         if (bluetoothSerial != null)
             state = bluetoothSerial.getState();
@@ -420,23 +454,17 @@ public class MainActivity extends AppCompatActivity
                 bluetoothSerial.write(message.toString().trim(), crlf);
                 break;
             default:
-                Toast.makeText(MainActivity.this, "You are not connected to Home ", Toast.LENGTH_SHORT).show();
+                Toast.makeText(Switch_Control.this, "You are not connected to Home ", Toast.LENGTH_SHORT).show();
                 break;
         }
-    }
 
+    }
     private void setValues(int t, int h, int w, int p)
     {
-        temperture.setTargetValue((float)t);
-        temp.setText("Temperature = "+t);
-        humidity.setTargetValue((float)h);
-        humid.setText("Humidity = "+h);
-        waterlevel.setTargetValue((float)w);
-        water.setText("Water level = "+w);
-        power.setTargetValue((float)p);
-        pow.setText("Power = "+p);
-
-        if(t !=0 && h != 0 && w !=0 && p != 0)
-            new SendRequest(this,t,h,w,p).execute();
+        tvTemp.setText(""+t+" C");
+        tvHumidity.setText(""+h+" %");
+        tvPower.setText(""+p+" Watt");
+        tvWater.setText(""+w+" %");
     }
+
 }

@@ -1,19 +1,15 @@
-package com.example.salmankhalid.ui_test;
+package com.SHProject.SmartHome.AppMain;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
-import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-
-import com.example.salmankhalid.ui_test.library.GaugeView;
 
 import java.util.Random;
 
