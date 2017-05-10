@@ -125,7 +125,7 @@ public class MainActivity extends AppCompatActivity
         super.onResume();
 
         // Open a Bluetooth serial port and get ready to establish a connection
-        if (bluetoothSerial.checkBluetooth() && bluetoothSerial.isBluetoothEnabled()) {
+        if (bluetoothSerial.isBluetoothEnabled()) {
             if (!bluetoothSerial.isConnected()) {
                 bluetoothSerial.start();
             }
@@ -320,32 +320,31 @@ public class MainActivity extends AppCompatActivity
         updateBluetoothState();
     }
 
-    char[] msg_data = new char[20];
+    StringBuilder msg_data = new StringBuilder();
     String values;
-    int j=0;
     public void onBluetoothSerialRead(String message) {
-        // Print the incoming message on the terminal screen
-//        tvTerminal.append(getString(R.string.terminal_message_template,
-//                bluetoothSerial.getConnectedDeviceName(),
-//                message));
-//
         for(int i=0; i<message.length();i++)
         {
             if(message.charAt(i) != '$') {
                 if (message.charAt(i) != '\r' || message.charAt(i) != '\n')
-                    msg_data[j++] = message.charAt(i);
-                msg_data.
+                    msg_data.append(message.charAt(i));
             }
             else
             {
-                String[] data_val = new String(msg_data, 0, j).split(",");
-                j = 0;
-                for (int k = 0; k < 20; k++)
-                    msg_data[k] = '0';
-                setValues(Integer.parseInt(data_val[0]),
-                        Integer.parseInt(data_val[1]),
-                        Integer.parseInt(data_val[2]),
-                        Integer.parseInt(data_val[3]));
+                if(msg_data.length() > 12)
+                {
+                    msg_data.setLength(0);
+                }
+                else {
+                    if(msg_data.charAt(2) == ',' && msg_data.charAt(5) == ',' && msg_data.charAt(8) == ',' ) {
+                        String[] data_val = msg_data.toString().split(",");
+                        msg_data.setLength(0);
+                        setValues(Integer.parseInt(data_val[0]),
+                                Integer.parseInt(data_val[1]),
+                                Integer.parseInt(data_val[2]),
+                                Integer.parseInt(data_val[3]));
+                    }
+                }
             }
         }
         tvTerminal.setText(values);

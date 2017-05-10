@@ -21,13 +21,13 @@
             android:elevation="1dp">
 
             <Button
-                android:text="Button"
+                android:text=" "
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/button" />
 
             <Button
-                android:text="Button"
+                android:text="Switch Control"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/button2" />
