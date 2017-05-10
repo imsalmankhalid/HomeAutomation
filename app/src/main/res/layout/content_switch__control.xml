@@ -20,40 +20,46 @@
         android:layout_height="wrap_content">
 
         <Switch
-            android:text="Room 1: Light"
+            android:text="Living Room: Light"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:id="@+id/sw1" />
+            android:id="@+id/sw1"
+            android:layout_height="40dp" />
 
         <Switch
-            android:text="Room 2: Light"
+            android:text="Living Room: Fan"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:id="@+id/sw2" />
+            android:id="@+id/sw2"
+            android:layout_height="40dp" />
 
         <Switch
-            android:text="Room 3: Light"
+            android:text="Bed Room: Light"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:id="@+id/sw3" />
+            android:id="@+id/sw3"
+            android:layout_height="40dp" />
 
         <Switch
-            android:text="FAN"
+            android:text="Bed Room: FAN"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:id="@+id/sw4" />
+            android:id="@+id/sw4"
+            android:layout_height="40dp" />
+
+        <Switch
+            android:text="Kitchen Light"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:id="@+id/sw5" />
 
         <Switch
             android:text="Door"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:id="@+id/sw5" />
+            android:id="@+id/sw6"
+            android:layout_height="40dp" />
 
         <Switch
-            android:text="Switch"
+            android:text="Everything"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:id="@+id/sw6" />
+            android:layout_height="wrap_content"
+            android:id="@+id/all" />
     </LinearLayout>
 
     <LinearLayout

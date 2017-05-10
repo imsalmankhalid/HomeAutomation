@@ -44,7 +44,7 @@ public class Switch_Control extends AppCompatActivity
     private String[] web_data = new String[20];
     private int count=0;
 
-    private Switch switch1, switch2, switch3, switch4, switch5, switch6;
+    private Switch switch1, switch2, switch3, switch4, switch5, switch6, switch7;
     private TextView tvTemp, tvHumidity, tvWater, tvPower;
 
     @Override
@@ -60,7 +60,8 @@ public class Switch_Control extends AppCompatActivity
         switch3 = (Switch) findViewById(R.id.sw3);
         switch4 = (Switch) findViewById(R.id.sw4);
         switch5 = (Switch) findViewById(R.id.sw5);
-        switch6 = (Switch) findViewById(R.id.sw6);
+        switch7 = (Switch) findViewById(R.id.sw6);
+        switch6 = (Switch) findViewById(R.id.all);
 
         tvTemp = (TextView) findViewById(R.id.temp);
         tvHumidity = (TextView) findViewById(R.id.humid);
@@ -153,6 +154,18 @@ public class Switch_Control extends AppCompatActivity
                 } else {
                     Toast.makeText(Switch_Control.this, "Everything: Off", Toast.LENGTH_SHORT).show();
                     send_msg("ALL0");
+                }
+            }
+        });
+        switch7.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (b) {
+                    Toast.makeText(Switch_Control.this, "Everythning: On ", Toast.LENGTH_SHORT).show();
+                    send_msg("L61");
+                } else {
+                    Toast.makeText(Switch_Control.this, "Everything: Off", Toast.LENGTH_SHORT).show();
+                    send_msg("L60");
                 }
             }
         });
@@ -291,7 +304,7 @@ public class Switch_Control extends AppCompatActivity
                 break;
             default:
                 subtitle = getString(R.string.status_disconnected);
-           //     bluetoothSerial.connect("98:D3:31:30:74:62");
+                bluetoothSerial.connect("98:D3:31:30:74:62");
                 break;
         }
 
@@ -407,7 +420,7 @@ public class Switch_Control extends AppCompatActivity
                     msg_data.setLength(0);
                 }
                 else {
-                    if(msg_data.charAt(2) == ',' && msg_data.charAt(5) == ',' && msg_data.charAt(8) == ',' && msg_data.charAt(11) == '$') {
+                    if(msg_data.charAt(2) == ',' && msg_data.charAt(5) == ',' && msg_data.charAt(8) == ',' ) {
                         String[] data_val = msg_data.toString().split(",");
                         msg_data.setLength(0);
                         setValues(Integer.parseInt(data_val[0]),
@@ -417,7 +430,7 @@ public class Switch_Control extends AppCompatActivity
                     }
                 }
             }
-        }        //svTerminal.post(scrollTerminalToBottom);
+        }
     }
 
     @Override
